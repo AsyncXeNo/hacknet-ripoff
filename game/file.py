@@ -49,7 +49,7 @@ class File(object):
             name = fullname[0]
             ext = fullname[-1]   
         else:
-            name = "".join(fullname[:-1])
+            name = ".".join(fullname[:-1])
             ext = fullname(-1)
         
         self.name = name

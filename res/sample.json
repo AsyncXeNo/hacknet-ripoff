@@ -1,44 +1,36 @@
-{
-    "dirs": [
-        {
-            "name": "home",
-            "dirs": [
-                {
-                    "name": "hentai",
-                    "dirs": [],
-                    "files": [
-                        {
-                            "name": "hentai1",
-                            "ext": "jpg",
-                            "contents": null
-                        },
-                        {
-                            "name": "hentai2",
-                            "ext": "png",
-                            "contents": null
-                        }
-                    ]
-                }
-            ],
-            "files": [
-                {
-                    "name": "homework",
-                    "ext": "txt",
-                    "contents": "2+2\n5+5"
-                }
-            ]
-        }
-    ],
-    "files": [
-        {
-            "name": "config",
-            "ext": "sys",
-            "contents": "010001 101001 100100"
-        },
-        {
-            "name": "passwords",
-            "ext": "txt",
-            "contents": "********\nxeno"
-        }
-    ]
-}
+[
+    {    
+        "name": "home",
+        "contents": [
+            {
+                "name": "hentai",
+                "contents": [
+                    {
+                        "name": "hentai1.jpg",
+                        "contents": null
+                    },
+                    {
+                        "name": "hentai2.png",
+                        "contents": null
+                    },
+                    {
+                        "name": "special",
+                        "contents": []
+                    }
+                ]
+            },
+            {
+                "name": "homework.txt",
+                "contents": "2+2\n5+5"
+            }
+        ]
+    },
+    {
+        "name": "config.sys",
+        "contents": "010001 101001 100100"
+    },
+    {
+        "name": "passwords.txt",
+        "contents": "********\nxeno"
+    }
+]

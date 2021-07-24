@@ -53,9 +53,19 @@ class Directory(object):
         self.contents["files"].append(file_)
         file_.set_parent(self)
 
+    def delete_file(self, filename):
+        file_ = self.get_file_by_name(filename)
+        file_.set_parent(None)
+        self.contents["files"].remove(file_)
+
     def add_dir(self, directory):
         self.contents["dirs"].append(directory)
         directory.set_parent(self)
+
+    def delete_dir(self, dirname):
+        dir_ = self.get_dirs(dirname)
+        dir_.set_parent(None)
+        self.contents["dirs"].remove(dir)
 
     def get_contents(self):
         return self.contents["dirs"] + self.contents["files"]
@@ -65,6 +75,21 @@ class Directory(object):
     
     def get_dirs(self):
         return self.contents["dirs"]
+
+
+    # helper
+
+    def get_file_by_name(self, filename):
+        for file_ in self.contents["files"]:
+            if file_.get_name() == filename:
+                return file_
+        self.logger.log_warning(f"Didn't find file with name {filename}")
+    
+    def get_dir_by_name(self, dirname):
+        for dir_ in self.contents["dirs"]:
+            if dir_.get_name() == dirname:
+                return dir_
+        self.logger.log_warning(f"Didn't find directory with name {dirname}")
 
 
 class RootDir(Directory):
