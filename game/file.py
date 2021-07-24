@@ -2,13 +2,15 @@ from utils.logger import Logger
 
 
 class File(object):
-    def __init__(self, path, name: str, ext: str = None, content: str = ""):
-        self.logger = Logger("game/file")
+    def __init__(self, name: str, ext: str = None, content: str = ""):
+        self.logger = Logger("game/file/File")
 
-        self.path = path        
+        self.parent = None    
         self.name = name
         self.ext = ext
         self.content = content
+
+        self.logger.log_neutral(f"Created a file named {self.get_name()}.")
 
     def read(self):
         return self.content
@@ -53,4 +55,13 @@ class File(object):
         self.name = name
         self.ext = ext
 
-        self.logger.log_neutral(f"Changed file name from {oldname} to {self.get_name()}")
+        self.logger.log_neutral(f"Changed file name from {oldname} to {self.get_name()}") 
+
+    def get_parent(self):
+        return self.parent
+
+    def set_parent(self, parent):
+        self.parent = parent
+
+    def get_path(self):
+        return f"{self.parent.get_path()}{self.get_name()}"
