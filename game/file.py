@@ -13,9 +13,11 @@ class File(object):
         self.logger.log_neutral(f"Created a file named {self.get_name()}.")
 
     def read(self):
+        self.logger.log_neutral(f"reading [{self.content}] from {self.get_name()}.")
         return self.content
 
     def write(self, content: str):
+        self.logger.log_neutral(f"writing [{content}] to {self.get_name()}.")
         self.content = content
 
     def append(self, content: str):
@@ -23,10 +25,10 @@ class File(object):
 
     def replace(self, old, new, count=None):
         if count == None:
-            self.content.replace(old, new)
+            self.content = self.content.replace(old, new)
             return
 
-        self.content.replace(old, new, count)
+        self.content = self.content.replace(old, new, count)
 
     def get_name(self):
         if self.ext:

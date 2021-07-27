@@ -1,4 +1,6 @@
 from utils.logger import Logger
+from utils.exceptions import *
+from game.file import File
 
 
 class Directory(object):
@@ -32,7 +34,10 @@ class Directory(object):
             response += "| -- "
             response += f"{file_.get_name()}\n"
 
-        return response
+        return response 
+
+    def get_relative(self, obj):
+        pass
 
     def get_name(self):
         return self.name
@@ -67,6 +72,12 @@ class Directory(object):
         dir_.set_parent(None)
         self.contents["dirs"].remove(dir)
 
+    def delete(self, obj):
+        if type(obj) == File:
+            self.delete_file(obj.get_name())
+        elif type(obj) == Directory:
+            self.delete_dir(obj.get_name())
+
     def get_contents(self):
         return self.contents["dirs"] + self.contents["files"]
 
@@ -83,13 +94,19 @@ class Directory(object):
         for file_ in self.contents["files"]:
             if file_.get_name() == filename:
                 return file_
-        self.logger.log_warning(f"Didn't find file with name {filename}")
+        raise FileNotFound(f"Didn't find file with name {filename}")
     
     def get_dir_by_name(self, dirname):
         for dir_ in self.contents["dirs"]:
             if dir_.get_name() == dirname:
                 return dir_
-        self.logger.log_warning(f"Didn't find directory with name {dirname}")
+        raise DirNotFound(f"Didn't find directory with name {dirname}")
+    
+    def get_obj_by_name(self, name):
+        for obj in self.get_contents():
+            if obj.get_name() == name:
+                return obj
+        raise ObjNotFound(f"Didn't find obj with name {name}")
 
 
 class RootDir(Directory):
@@ -97,6 +114,9 @@ class RootDir(Directory):
         self.logger = Logger("game/directory/RootDir")
         
         super().__init__(None)
+
+    def get_name(self):
+        return "/"
 
     def set_name(self, name: str):
         self.logger.log_alert("Root directory has no name.")

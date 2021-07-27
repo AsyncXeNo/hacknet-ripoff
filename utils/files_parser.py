@@ -1,14 +1,13 @@
 from game.file import File
 from game.directory import Directory, RootDir
 from utils.logger import Logger
-from game.filesystem import FileSystem
 
 
 class FilesParser(object):
     logger = Logger("utils/files_parser/FilesParser")
 
     @staticmethod
-    def parse_file_system(data):
+    def parse_root(data):
         rootdir = RootDir()
 
         dirs = []
@@ -25,7 +24,7 @@ class FilesParser(object):
         for file_ in files:
             rootdir.add_file(FilesParser.parse_file(file_))
 
-        return FileSystem(rootdir)
+        return rootdir
 
 
     @staticmethod
