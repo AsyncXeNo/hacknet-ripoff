@@ -1,3 +1,4 @@
+from os import O_NONBLOCK
 import shlex
 
 from utils.exceptions import FileNotFound, PathNotFound
@@ -34,7 +35,10 @@ class Terminal(object):
             "disconnect": self.disconnect,
             "dc": self.disconnect,
             "echo": self.echo,
-            "rm": self.rm
+            "rm": self.rm,
+            "mkdir": self.mkdir,
+            "mv": self.mv,
+            "cp": self.cp,
         }
 
 
@@ -206,6 +210,58 @@ class Terminal(object):
             return self.response(1, None, f"File with name {filename} does not exist.")
             
         return self.response(0, file_to_read.read(), None)
+        
+    
+    def mv(self, args):
+        if len(args) < 2:
+            return self.response(1, None, "Syntax: mv <oldlocation> <newlocation>")
+
+        old = args[0]
+        new = args[1]
+        
+        try:
+            obj = self.os.get_obj_by_path(self.currentdir, old)
+        except ObjNotFound:
+            return self.response(1, None, "Invalid path")
+    
+        try:
+            destinationdir = self.os.get_obj_by_path(self.currentdir, new)
+        except ObjNotFound:
+            return self.response(1, None, "Path not found.")
+        
+        if not (type(destinationdir) in [Directory, RootDir]):
+            return self.response(1, None, "Path is not a directory.")
+            
+        destinationdir.add(obj)
+
+        self.rm([old])
+
+        return self.response(0, None, None)
+
+    
+    def cp(self, args):
+        if len(args) < 2:
+            return self.response(1, None, "Syntax: mv <oldlocation> <newlocation>")
+
+        old = args[0]
+        new = args[1]
+        
+        try:
+            obj = self.os.get_obj_by_path(self.currentdir, old)
+        except ObjNotFound:
+            return self.response(1, None, "Invalid path")
+    
+        try:
+            destinationdir = self.os.get_obj_by_path(self.currentdir, new)
+        except ObjNotFound:
+            return self.response(1, None, "Path not found.")
+        
+        if not (type(destinationdir) in [Directory, RootDir]):
+            return self.response(1, None, "Path is not a directory.")
+            
+        destinationdir.add(obj)
+
+        return self.response(0, None, None)
 
 
     def rm(self, args):
@@ -217,6 +273,39 @@ class Terminal(object):
         obj.get_parent().delete(obj)
         return self.response(0, None, None)
 
+    def mkdir(self, args):
+        path = "" if len(args) < 1 else args[0]
+        pathsplit = path.split("/")
+
+        if pathsplit[-1] == "":
+            pathsplit.pop()
+            path = path[:-1]
+
+        if len(pathsplit) > 1:
+            destinationdir = "/".join(pathsplit[:-1])
+        else:
+            destinationdir = self.currentdir.get_path()
+
+        try:
+            destinationdir = self.os.get_obj_by_path(self.currentdir, destinationdir)
+        except ObjNotFound:
+            return self.response(1, None, "Path not found.")
+
+        if not (type(destinationdir) in [Directory, RootDir]):
+            return self.response(1, None, "Path not found.")
+
+        
+        if path == "":
+            return self.response(1, None, "You did not provide a directory name.")
+
+        
+        dirname = path.split("/").pop()
+        newdir = Directory(dirname)
+        destinationdir.add_dir(newdir)
+        return self.response(0, None, None)
+        
+
+
     def touch(self, args):
         path = "" if len(args) < 1 else args[0]
         if len(path.split("/")) > 1:
@@ -227,10 +316,10 @@ class Terminal(object):
         try:
             destinationdir = self.os.get_obj_by_path(self.currentdir, destinationdir)
         except ObjNotFound:
-            return self.response(1, None, "Directory not found.")
+            return self.response(1, None, "Path not found.")
             
         if not (type(destinationdir) in [Directory, RootDir]):
-            return self.response(1, None, "Directory not found.")
+            return self.response(1, None, "Path not found.")
             
 
         if path == "":
@@ -238,6 +327,8 @@ class Terminal(object):
             
 
         filename = path.split("/").pop().split(".")
+        if len(filename) < 1:
+            return self.response(1, None, "File name cannot be empty.")
         if len(filename) == 1:
             name = filename[0]
             ext = None

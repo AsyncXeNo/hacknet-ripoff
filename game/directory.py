@@ -68,14 +68,20 @@ class Directory(object):
         directory.set_parent(self)
 
     def delete_dir(self, dirname):
-        dir_ = self.get_dirs(dirname)
+        dir_ = self.get_dir_by_name(dirname)
         dir_.set_parent(None)
-        self.contents["dirs"].remove(dir)
+        self.contents["dirs"].remove(dir_)
+
+    def add(self, obj):
+        if type(obj) == File:
+            self.add_file(obj)
+        else:
+            self.add_dir(obj)
 
     def delete(self, obj):
         if type(obj) == File:
             self.delete_file(obj.get_name())
-        elif type(obj) == Directory:
+        else:
             self.delete_dir(obj.get_name())
 
     def get_contents(self):
