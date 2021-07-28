@@ -34,7 +34,7 @@ class Terminal(object):
             "disconnect": self.disconnect,
             "dc": self.disconnect,
             "echo": self.echo,
-            "rm": self.rm,
+            "rm": self.rm
         }
 
 
@@ -53,6 +53,7 @@ class Terminal(object):
                 
         elif self.subcommand:
             return self.subcommand(args)
+            
         
     def echo(self, args):
         output = " ".join(args)
@@ -212,7 +213,7 @@ class Terminal(object):
         if path == "":
             return self.response(1, None, "You did not provide a file name.")
 
-        obj = self.os.get_obj_by_path(path)
+        obj = self.os.get_obj_by_path(self.currentdir, path)
         obj.get_parent().delete(obj)
         return self.response(0, None, None)
 
@@ -287,15 +288,11 @@ class Terminal(object):
         return output
 
     def response(self, code, stdout, stderr):
-        if stdout and stderr:
-            return f"Command exited with code {code}" + f"\n{stdout}" + f"\n{stderr}"
-        elif stderr:
-            self.logger.log_error(stderr)
-            return f"Command exited with code {code}" + f"\n{stderr}"
-        elif stdout:
-            return f"Command exited with code {code}" + f"\n{stdout}"
-        else:
-            return f"Command exited with code {code}"
+        return {
+            "code": code,
+            "stdout": stdout,
+            "stderr": stderr,
+        }
 
 
     def new_line(self):

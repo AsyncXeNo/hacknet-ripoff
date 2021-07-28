@@ -1,4 +1,5 @@
 #!venv/bin/python3
+import os
 import time
 import json
 import pickle
@@ -34,10 +35,18 @@ def main():
                         pickle.dump(internet, f)
                 else:
                     mainterminal = internet.systems[entry["id"]].mainterminal
-                    outputs[entry["id"]] = (mainterminal.run(entry["cmd"].strip().split(" ")), mainterminal.new_line())
+                    outputs[entry["id"]] = {
+                        "response": mainterminal.run(entry["cmd"].strip().split(" ")), 
+                        "newline": mainterminal.new_line(),
+                    }
             
-            with open("data/output.json", "w") as f:
+            with open("data/output.json", "r+") as f:
+                file_outputs = json.load(f)
+                file_outputs.update(outputs)
+                f.truncate(0)
+                f.seek(0)
                 json.dump(outputs, f, indent=4)
+                outputs.clear()
                 
         except IOError:
             continue
@@ -48,3 +57,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+    with open("data/internet.pickle", "wb") as f:
+        pickle.dump(Internet(), f)

@@ -7,7 +7,7 @@ from utils.logger import Logger
 
 class IdGenerator(object):
     @staticmethod
-    def generate_id(length:int=8):
+    def generate_id(length:int=10):
         with open("data/generated_ids.json", "r") as f:
             generated = json.load(f)
 
